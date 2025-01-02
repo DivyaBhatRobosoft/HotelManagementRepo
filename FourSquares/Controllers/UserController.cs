@@ -5,6 +5,7 @@ using FourSquares.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using FourSquares.Repositories;
 
 namespace FourSquares.Controllers
 {
@@ -15,12 +16,14 @@ namespace FourSquares.Controllers
         private readonly FoursquareContext _context;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly JWTTokenService _jwtTokenService;
+        private readonly IUserRepository _userRepository;
 
-        public UserController(FoursquareContext context, IPasswordHasher<User> passwordHasher, JWTTokenService jwtTokenService)
+        public UserController(FoursquareContext context, IPasswordHasher<User> passwordHasher, JWTTokenService jwtTokenService, IUserRepository userRepository)
         {
             _context = context;
             _passwordHasher = passwordHasher;
             _jwtTokenService = jwtTokenService;
+            _userRepository = userRepository;
         }
 
         // User Registration
@@ -40,14 +43,13 @@ namespace FourSquares.Controllers
                     Email = model.Email,
                     Password = _passwordHasher.HashPassword(null, model.Password)
                 };
-                await _context.Users.AddAsync(user);
-                await _context.SaveChangesAsync();
+                
+                await _userRepository.AddAsync(user);
 
                 return Ok("User registered successfully");
 
             }
 
-          
             catch (Exception ex)
             {
                 return StatusCode(500, "An unexpected error occurred. Please try again later.");
@@ -113,7 +115,6 @@ namespace FourSquares.Controllers
                     ReviewText = review.ReviewText
 
                 };
-
                 _context.Reviews.Add(reviews);
                 await _context.SaveChangesAsync();
 

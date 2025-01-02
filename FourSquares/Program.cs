@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.IdentityModel.Tokens.Jwt;
 using FourSquares.Middleware;
+using FourSquares.Repositories;
 
 
 namespace FourSquares
@@ -63,6 +64,9 @@ namespace FourSquares
             builder.Services.AddControllers();
 
             builder.Services.AddScoped<JWTTokenService>();
+
+            builder.Services.AddScoped<IHotelRepository, HotelRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 

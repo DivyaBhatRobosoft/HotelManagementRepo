@@ -1,5 +1,6 @@
 ﻿using FourSquares.Data;
 using FourSquares.Models;
+using FourSquares.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,24 +13,23 @@ namespace FourSquares.Controllers
     public class HotelController : ControllerBase
     {
         private readonly FoursquareContext _context;
+        private readonly IHotelRepository _hotelRepository;
 
-        public HotelController(FoursquareContext context)
+        public HotelController(FoursquareContext context, IHotelRepository hotelRepository)
         {
             _context = context;
+            _hotelRepository = hotelRepository;
         }
 
 
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<string>>> SearchHotelsByCity(string city)
+        public async Task<ActionResult> SearchHotelsByCity(string city)
         {
             try
             {
-                var hotelNames = await _context.Hotels
-                    .Where(h => h.City.ToLower() == city.ToLower())
-                    .Select(h => h.HotelName)
-                    .ToListAsync();
+                var hotelNames = await _hotelRepository.GetHotelsByCityAsync(city);
 
-                if (hotelNames == null || hotelNames.Count == 0)
+                if (hotelNames == null)
                 {
                     return NotFound("No hotels found in this city.");
                 }
@@ -52,9 +52,7 @@ namespace FourSquares.Controllers
         public async Task<ActionResult<Hotel>> GetHotelDetails(int id)
         {
             try {
-                var hotel = await _context.Hotels
-                    .Include(h => h.Reviews)
-                    .FirstOrDefaultAsync(h => h.HotelId == id);
+                var hotel = await _hotelRepository.GetHotelByIdAsync(id);
 
                 if (hotel == null)
                     return NotFound("Hotel not found.");
@@ -98,8 +96,7 @@ namespace FourSquares.Controllers
                 };
 
 
-                _context.Hotels.Add(hotel);
-                await _context.SaveChangesAsync();
+                await _hotelRepository.CreateHotelAsync(hotel);
 
                 return CreatedAtAction(nameof(GetHotelDetails), new { id = hotel.HotelId }, hotel);
             }
