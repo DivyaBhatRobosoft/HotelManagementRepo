@@ -16,5 +16,7 @@ public partial class User
 
     public string? Role { get; set; } = "User";
 
+    public string? ProfilePicture { get; set; }
+
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

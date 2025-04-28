@@ -17,5 +17,11 @@ public partial class Hotel
 
     public string City { get; set; } = null!;
 
+    public string ImageUrl { get; set; }
+    public string ContactNumber { get; set; }
+
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+    public ICollection<Room> Rooms { get; set; } 
+    public ICollection<Reservation> Reservations { get; set; }
 }

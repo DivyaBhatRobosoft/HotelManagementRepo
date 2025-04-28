@@ -13,6 +13,8 @@ public partial class Review
 
     public string? ReviewText { get; set; }
 
+    public int Ratings { get; set; }    
+
     public DateTime? DateAdded { get; set; }
 
     public virtual Hotel Hotel { get; set; } = null!;

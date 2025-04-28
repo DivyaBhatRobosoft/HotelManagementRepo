@@ -12,6 +12,7 @@ namespace FourSquares.Models
 
         public string? ReviewText { get; set; }
 
+        public int Ratings { get; set; }
         public DateTime? DateAdded { get; set; }
     }
 }

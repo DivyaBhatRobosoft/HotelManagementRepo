@@ -21,7 +21,6 @@ namespace FourSquares.Controllers
             _hotelRepository = hotelRepository;
         }
 
-
         [HttpGet("search")]
         public async Task<ActionResult> SearchHotelsByCity(string city)
         {
@@ -67,9 +66,7 @@ namespace FourSquares.Controllers
             {
                 return StatusCode(500, new { message = "An unexpected error occurred. Please try again later." });
             }
-
         }
-
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<AddHotel>> AddHotel([FromBody] AddHotel hotels)
@@ -95,7 +92,6 @@ namespace FourSquares.Controllers
                     City = hotels.City
                 };
 
-
                 await _hotelRepository.CreateHotelAsync(hotel);
 
                 return CreatedAtAction(nameof(GetHotelDetails), new { id = hotel.HotelId }, hotel);
@@ -105,7 +101,5 @@ namespace FourSquares.Controllers
                 return StatusCode(500, "Internal server error.");
             }
         }
-
-
     }
 }
